@@ -6,9 +6,10 @@
 1. 收集近 1000 期开奖数据。
 2. 标准化开奖、销量、奖池、奖级信息。
 3. 计算概率、频率、遗漏、分区、和值、奇偶、大小、连号、重号等指标。
-4. 生成候选号码并做历史回测。
-5. 每日生成若干组模拟号码，并说明结构理由与理论概率。
-6. 明确标注：彩票是随机开奖，本 Skill 不承诺预测未来，不输出“稳赚”“必中”“内部号”等结论。
+4. 参考公开彩票工具产品形态，提供均线分析、遗漏分析、趋势分析和 AI组合评分。
+5. 生成候选号码并做历史回测。
+6. 每日生成若干组模拟号码，并说明结构理由与理论概率。
+7. 明确标注：彩票是随机开奖，本 Skill 不承诺预测未来，不输出“稳赚”“必中”“内部号”等结论。
 
 ## 强制工作流
 每次分析时按以下顺序执行：
@@ -17,6 +18,7 @@
    - 首选中彩网 / 中国体彩网 / 中国福彩网等官方或半官方页面。
    - 若页面为动态渲染，使用 `scripts/fetch_zhcw_playwright.py`。
    - 若本地环境有 API key，可使用 `scripts/fetch_jisu_history.py` 作为补充源。
+   - 不抓取彩虹多多等第三方竞品数据，只参考公开页面的工具逻辑。
 
 2. **数据校验**
    - 快乐8：每期必须 20 个号码，范围 1-80，不重复。
@@ -30,14 +32,20 @@
    - 风险统计：单注理论概率、回测收益、最大回撤、连亏期数。
    - 候选号码只允许标记为“模拟组合”或“娱乐研究组合”。
 
-4. **每日选号**
+4. **AI评分 / 类彩虹多多工具模式**
+   - 使用 `scripts/ai_predict.py` 输出 AI评分报告。
+   - 参考工具形态：5期/10期/20期均线、遗漏特征、近期趋势、历史统计、结构平衡。
+   - 每组必须包含：号码、AI评分、结构置信度、选择理由、理论概率、风险提示。
+   - AI评分只是结构与统计分，不是中奖概率。
+
+5. **每日选号**
    - 使用 `scripts/daily_picks.py` 输出每日 Markdown 组合表。
    - 每组必须包含：号码、选择理由、理论概率、风险提示。
    - 大乐透默认输出一等奖概率：`1 / 21,425,712`。
    - 快乐8默认按“选10”输出全中概率，也支持 `--choose-k 1-10`。
    - 理由只能解释组合结构，例如分区、奇偶、和值、高频、遗漏；不得说成“预测原因”。
 
-5. **回测优先**
+6. **回测优先**
    - 任何策略必须先回测最近 N 期。
    - 不允许只凭“热号”“冷号”“玄学感”直接推荐，除非用户明确要求娱乐玩法。
 
@@ -72,6 +80,10 @@ python scripts/normalize_draws.py --game dlt --input data/dlt_raw.json --out dat
 python scripts/analyze_draws.py --game kl8 --input data/kl8_1000.csv --out outputs/kl8_report.md
 python scripts/analyze_draws.py --game dlt --input data/dlt_1000.csv --out outputs/dlt_report.md
 
+# AI评分 / 类彩虹多多工具模式
+python scripts/ai_predict.py --game dlt --input data/dlt_1000.csv --groups 5 --out outputs/dlt_ai_predict.md
+python scripts/ai_predict.py --game kl8 --input data/kl8_1000.csv --choose-k 10 --groups 5 --out outputs/kl8_ai_predict.md
+
 # 回测
 python scripts/backtest.py --game dlt --input data/dlt_1000.csv --strategy random --trials 1000
 
@@ -79,6 +91,18 @@ python scripts/backtest.py --game dlt --input data/dlt_1000.csv --strategy rando
 python scripts/daily_picks.py --game dlt --input data/dlt_1000.csv --groups 5 --out outputs/dlt_daily.md
 python scripts/daily_picks.py --game kl8 --input data/kl8_1000.csv --choose-k 10 --groups 5 --out outputs/kl8_daily.md
 ```
+
+## AI评分输出要求
+
+| 字段 | 要求 |
+|---|---|
+| 组别 | 从 1 开始编号 |
+| 号码 | 快乐8显示所选 k 个号；大乐透分前区/后区 |
+| AI评分 | 0-100，只表示统计结构分 |
+| 结构置信度 | 低 / 中 / 高，只表示结构均衡程度 |
+| 选择理由 | 均线、遗漏、趋势、热号、分区、奇偶、和值 |
+| 理论概率 | 必须显示真实理论概率 |
+| 风险提示 | 明确不构成投注建议 |
 
 ## 每日选号输出要求
 
