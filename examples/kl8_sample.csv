@@ -1,0 +1,4 @@
+game,issue,draw_date,numbers,front_numbers,back_numbers,sale_amount,pool_amount,source,fetched_at
+kl8,2026163,2026-06-22,"08 09 11 14 18 22 28 35 37 40 41 42 45 50 54 58 70 71 73 74",,,94606708,,example_search_snippet,2026-06-28T00:00:00Z
+kl8,2026162,2026-06-21,"01 02 08 13 16 18 19 30 33 37 39 40 56 57 63 69 71 73 76 78",,,93246304,,example_search_snippet,2026-06-28T00:00:00Z
+kl8,2026161,2026-06-20,"02 14 15 23 28 30 35 39 43 44 49 50 51 53 57 60 62 69 74 76",,,94693532,,example_search_snippet,2026-06-28T00:00:00Z
