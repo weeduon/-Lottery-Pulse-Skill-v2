@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""Generate simple markdown analysis report from normalized CSV."""
+"""Generate simple markdown analysis report from normalized CSV.
+
+This script deliberately avoids pandas.DataFrame.to_markdown(), because that
+method requires the optional tabulate package. Fewer optional dependency traps,
+fewer tiny software landmines for humans to step on.
+"""
 from __future__ import annotations
 
 import argparse
@@ -34,7 +39,14 @@ def omission(series: pd.Series, universe: range) -> pd.DataFrame:
 
 
 def md_table(df: pd.DataFrame, n: int = 10) -> str:
-    return df.head(n).to_markdown(index=False)
+    """Render a tiny GitHub-flavored Markdown table without optional deps."""
+    head = df.head(n).copy()
+    cols = list(head.columns)
+    lines = ["| " + " | ".join(str(c) for c in cols) + " |"]
+    lines.append("| " + " | ".join("---" for _ in cols) + " |")
+    for _, row in head.iterrows():
+        lines.append("| " + " | ".join(str(row[c]) for c in cols) + " |")
+    return "\n".join(lines)
 
 
 def main() -> int:
