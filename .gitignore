@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+
+# Generated runtime data
+data/*.json
+data/*.csv
+!examples/*.csv
+outputs/*.md
+!outputs/*_sample.md
+
+# Local artifacts
+*.zip
+.DS_Store
